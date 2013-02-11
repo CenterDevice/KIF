@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		168CECB716C94CE500E6701C /* KIFJunitTestLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 168CECB316C94CE500E6701C /* KIFJunitTestLogger.h */; };
+		168CECB816C94CE500E6701C /* KIFJunitTestLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 168CECB416C94CE500E6701C /* KIFJunitTestLogger.m */; };
+		168CECB916C94CE500E6701C /* KIFTestLogger.h in Headers */ = {isa = PBXBuildFile; fileRef = 168CECB516C94CE500E6701C /* KIFTestLogger.h */; };
+		168CECBA16C94CE500E6701C /* KIFTestLogger.m in Sources */ = {isa = PBXBuildFile; fileRef = 168CECB616C94CE500E6701C /* KIFTestLogger.m */; };
 		39160B1113D1E6BB00311E38 /* LoadableCategory.h in Headers */ = {isa = PBXBuildFile; fileRef = 39160B1013D1E6BB00311E38 /* LoadableCategory.h */; };
 		AAB0726C139719AC008AF393 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AAB0726B139719AC008AF393 /* Foundation.framework */; };
 		AAB0728213971A63008AF393 /* KIF-Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AAB0728113971A63008AF393 /* KIF-Prefix.pch */; };
@@ -38,6 +42,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		168CECB316C94CE500E6701C /* KIFJunitTestLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIFJunitTestLogger.h; sourceTree = "<group>"; };
+		168CECB416C94CE500E6701C /* KIFJunitTestLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KIFJunitTestLogger.m; sourceTree = "<group>"; };
+		168CECB516C94CE500E6701C /* KIFTestLogger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KIFTestLogger.h; sourceTree = "<group>"; };
+		168CECB616C94CE500E6701C /* KIFTestLogger.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KIFTestLogger.m; sourceTree = "<group>"; };
 		39160B1013D1E6BB00311E38 /* LoadableCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoadableCategory.h; sourceTree = "<group>"; };
 		AAB07268139719AC008AF393 /* libKIF.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libKIF.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		AAB0726B139719AC008AF393 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -123,6 +131,10 @@
 		AAB0728413971A98008AF393 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				168CECB316C94CE500E6701C /* KIFJunitTestLogger.h */,
+				168CECB416C94CE500E6701C /* KIFJunitTestLogger.m */,
+				168CECB516C94CE500E6701C /* KIFTestLogger.h */,
+				168CECB616C94CE500E6701C /* KIFTestLogger.m */,
 				AAB0728513971A98008AF393 /* KIF-Prefix.pch */,
 				AAB0728613971A98008AF393 /* KIFTestController.h */,
 				AAB0728713971A98008AF393 /* KIFTestController.m */,
@@ -181,6 +193,8 @@
 				CDFD8E86139728B4008D299F /* NSFileManager-KIFAdditions.h in Headers */,
 				39160B1113D1E6BB00311E38 /* LoadableCategory.h in Headers */,
 				C194255815D83DE9004FC314 /* KIFTypist.h in Headers */,
+				168CECB716C94CE500E6701C /* KIFJunitTestLogger.h in Headers */,
+				168CECB916C94CE500E6701C /* KIFTestLogger.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -246,6 +260,8 @@
 				AAB072B313971AB2008AF393 /* UIWindow-KIFAdditions.m in Sources */,
 				CDFD8E87139728B4008D299F /* NSFileManager-KIFAdditions.m in Sources */,
 				C194255915D83DE9004FC314 /* KIFTypist.m in Sources */,
+				168CECB816C94CE500E6701C /* KIFJunitTestLogger.m in Sources */,
+				168CECBA16C94CE500E6701C /* KIFTestLogger.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

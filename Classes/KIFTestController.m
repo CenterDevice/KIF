@@ -10,6 +10,7 @@
 #import "KIFTestController.h"
 #import "KIFTestScenario.h"
 #import "KIFTestStep.h"
+#import "KIFTestLogger.h"
 #import "NSFileManager-KIFAdditions.h"
 #import <QuartzCore/QuartzCore.h>
 #import <dlfcn.h>
@@ -137,6 +138,9 @@ static void releaseInstance()
         failedScenarioIndexes = [[NSMutableIndexSet alloc] init];
     }
     
+    loggers = [[NSMutableArray alloc] init];
+    [self registerLogger:[[[KIFTestLogger alloc] init] autorelease]];
+    
     return self;
 }
 
@@ -155,6 +159,9 @@ static void releaseInstance()
 
     [failedScenarioIndexes release];
     failedScenarioIndexes = nil;
+    
+    [loggers release];
+    loggers = nil;
     
     [super dealloc];
 }
@@ -500,67 +507,113 @@ static void releaseInstance()
     return fileHandle;
 }
 
+- (NSInteger)failureCount;
+{
+    return failureCount;
+}
+
+- (void)registerLogger:(KIFTestLogger*) logger
+{
+    [logger setupController: self];
+    [loggers addObject:logger];
+}
+
+#pragma mark Logging
+
+
 - (void)_logTestingDidStart;
 {
-    if (failedScenarioIndexes.count != self.scenarios.count) {
-        KIFLog(@"BEGIN KIF TEST RUN: re-running %d of %d scenarios that failed last time", failedScenarioIndexes.count, self.scenarios.count);
-    } else {
-        KIFLog(@"BEGIN KIF TEST RUN: %d scenarios", self.scenarios.count);
+    for(KIFTestLogger* logger in loggers) {
+        [logger logTestingDidStart];
     }
+    
+//    if (failedScenarioIndexes.count != self.scenarios.count) {
+//        KIFLog(@"BEGIN KIF TEST RUN: re-running %d of %d scenarios that failed last time", failedScenarioIndexes.count, self.scenarios.count);
+//    } else {
+//        KIFLog(@"BEGIN KIF TEST RUN: %d scenarios", self.scenarios.count);
+//    }
 }
 
 - (void)_logTestingDidFinish;
 {
-    KIFLogBlankLine();
-    KIFLogSeparator();
-    KIFLog(@"KIF TEST RUN FINISHED: %d failures (duration %.2fs)", failureCount, -[self.testSuiteStartDate timeIntervalSinceNow]);
-    KIFLogSeparator();
+    for(KIFTestLogger* logger in loggers) {
+        [logger logTestingDidFinish];
+    }
     
-    // Also log the failure count to stdout, for easier integration with CI tools.
-    NSLog(@"*** KIF TESTING FINISHED: %d failures", failureCount);
+//    KIFLogBlankLine();
+//    KIFLogSeparator();
+//    KIFLog(@"KIF TEST RUN FINISHED: %d failures (duration %.2fs)", failureCount, -[self.testSuiteStartDate timeIntervalSinceNow]);
+//    KIFLogSeparator();
+//    
+//    // Also log the failure count to stdout, for easier integration with CI tools.
+//    NSLog(@"*** KIF TESTING FINISHED: %d failures", failureCount);
 }
 
 - (void)_logDidStartScenario:(KIFTestScenario *)scenario;
 {
-    KIFLogBlankLine();
-    KIFLogSeparator();
-    KIFLog(@"BEGIN SCENARIO %d/%d (%d steps)", [self.scenarios indexOfObjectIdenticalTo:scenario] + 1, self.scenarios.count, scenario.steps.count);
-    KIFLog(@"%@", scenario.description);
-    KIFLogSeparator();
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidStartScenario:scenario];
+    }
+    
+//    KIFLogBlankLine();
+//    KIFLogSeparator();
+//    KIFLog(@"BEGIN SCENARIO %d/%d (%d steps)", [self.scenarios indexOfObjectIdenticalTo:scenario] + 1, self.scenarios.count, scenario.steps.count);
+//    KIFLog(@"%@", scenario.description);
+//    KIFLogSeparator();
 }
 
 - (void)_logDidSkipScenario:(KIFTestScenario *)scenario;
 {
-    if ([[[[NSProcessInfo processInfo] environment] objectForKey:@"KIF_SILENT_FILTERING"] boolValue]) return; // Don't want filter skipping noise
-    KIFLogBlankLine();
-    KIFLogSeparator();
-    NSString *reason = (scenario.skippedByFilter ? @"filter doesn't match description" : @"only running previously-failed scenarios");
-    KIFLog(@"SKIPPING SCENARIO %d/%d (%@)", [self.scenarios indexOfObjectIdenticalTo:scenario] + 1, self.scenarios.count, reason);
-    KIFLog(@"%@", scenario.description);
-    KIFLogSeparator();
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidSkipScenario:scenario];
+    }
+    
+//    if ([[[[NSProcessInfo processInfo] environment] objectForKey:@"KIF_SILENT_FILTERING"] boolValue]) return; // Don't want filter skipping noise
+//    KIFLogBlankLine();
+//    KIFLogSeparator();
+//    NSString *reason = (scenario.skippedByFilter ? @"filter doesn't match description" : @"only running previously-failed scenarios");
+//    KIFLog(@"SKIPPING SCENARIO %d/%d (%@)", [self.scenarios indexOfObjectIdenticalTo:scenario] + 1, self.scenarios.count, reason);
+//    KIFLog(@"%@", scenario.description);
+//    KIFLogSeparator();
 }
 
 - (void)_logDidSkipAddingScenarioGenerator:(NSString *)selectorString;
 {
-    KIFLog(@"Skipping scenario generator %@ because it takes arguments", selectorString);
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidSkipAddingScenarioGenerator:selectorString];
+    }
+    
+//    KIFLog(@"Skipping scenario generator %@ because it takes arguments", selectorString);
 }
 
 - (void)_logDidFinishScenario:(KIFTestScenario *)scenario duration:(NSTimeInterval)duration
 {
-    KIFLogSeparator();
-    KIFLog(@"END OF SCENARIO (duration %.2fs)", duration);
-    KIFLogSeparator();
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidFinishScenario:scenario duration:duration];
+    }
+    
+//    KIFLogSeparator();
+//    KIFLog(@"END OF SCENARIO (duration %.2fs)", duration);
+//    KIFLogSeparator();
 }
 
 - (void)_logDidFailStep:(KIFTestStep *)step duration:(NSTimeInterval)duration error:(NSError *)error;
 {
-    KIFLog(@"FAIL (%.2fs): %@", duration, step);
-    KIFLog(@"FAILING ERROR: %@", error);
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidFailStep:step duration:duration error:error];
+    }
+    
+//    KIFLog(@"FAIL (%.2fs): %@", duration, step);
+//    KIFLog(@"FAILING ERROR: %@", error);
 }
 
 - (void)_logDidPassStep:(KIFTestStep *)step duration:(NSTimeInterval)duration;
 {
-    KIFLog(@"PASS (%.2fs): %@", duration, step);
+    for(KIFTestLogger* logger in loggers) {
+        [logger logDidPassStep:step duration:duration];
+    }
+    
+//    KIFLog(@"PASS (%.2fs): %@", duration, step);
 }
 
 @end
